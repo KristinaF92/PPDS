@@ -8,9 +8,10 @@ class Shared:
     def __init__(self):
         self.mutex = Mutex()
         self.read_LS = LightSwitch()
-        # spociatku mame otvorenu miestnost
+        """spociatku mame otvorenu miestnost"""
         self.room_empty = Semaphore(1)
-        self.turn = Semaphore(1)
+        """pridanie silneho semaforu (turniketu) fifo fronta pre citatelov"""
+        self.turn = Semaphore(1, 'fifo')
 
     def read(self, thread_id):
         print(f'{thread_id} reading')
@@ -22,6 +23,7 @@ class Shared:
 
     def reader_thread(self, thread_id):
         while True:
+            sleep(randint(0, 10) / 10)
             """citatelia musia chodit za sebou"""
             self.turn.wait()
             """preto dalsi citatel musi odomknut turniket tomu za sebou"""
@@ -33,11 +35,17 @@ class Shared:
 
     def writer_thread(self, thread_id):
         while True:
+            """zapisovatelia si uzamknu turniket aby sa predislo vyhladoveniu"""
             self.turn.wait()
             self.room_empty.wait()
             self.write(thread_id)
             self.room_empty.signal()
             self.turn.signal()
+            """
+            turniket sa odomyka az po opusteni miestnosti, 
+            v tomto momente je miestnost prazdna,
+            citatel moze prejst turniketom
+            """
             print(f'{thread_id} leaving')
 
 
