@@ -1,9 +1,7 @@
 from time import sleep
 from random import choice, randint
-
 from fei.ppds import Mutex, Semaphore, print, Thread
 from barrier import Barrier
-
 
 
 class Shared(object):
@@ -57,7 +55,6 @@ def hydrogen(shared):
     shared.barrier.wait()
 
 
-
 def test():
     oxygen.name = 'O'
     hydrogen.name = 'H'
@@ -70,4 +67,3 @@ def test():
 
 if __name__ == "__main__":
     test()
-
