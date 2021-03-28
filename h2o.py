@@ -1,3 +1,6 @@
+from time import sleep
+from random import choice, randint
+
 from fei.ppds import Mutex, Semaphore, print, Thread
 from barrier import Barrier
 
@@ -30,7 +33,7 @@ def oxygen(shared):
         shared.hydroQueue.signal(2)
 
     shared.oxyQueue.wait()
-    bond('O')
+    bond(oxygen.name)
     shared.barrier.wait()
     '''mutex musi byt tu kvoli 2 vodikom'''
     shared.mutex.unlock()
@@ -50,20 +53,21 @@ def hydrogen(shared):
         shared.hydroQueue.signal(2)
 
     shared.hydroQueue.wait()
-    bond('H')
+    bond(hydrogen.name)
     shared.barrier.wait()
 
 
-threads = list()
-shared = Shared()
-for i in range(5):
-    t = Thread(oxygen,shared)
-    threads.append(t)
 
-for i in range(10):
-    t = Thread(hydrogen,shared)
-    threads.append(t)
+def test():
+    oxygen.name = 'O'
+    hydrogen.name = 'H'
+    shared = Shared()
 
-for t in threads:
-    t.join()
+    while True:
+        Thread(choice([oxygen, hydrogen]), shared)
+        sleep(randint(0, 3) / 100)
+
+
+if __name__ == "__main__":
+    test()
 
