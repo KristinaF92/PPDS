@@ -7,7 +7,13 @@ import math
 @cuda.jit
 def my_kernel_2D(io_array):
     x, y = cuda.grid(2)
-    ### YOUR SOLUTION HERE
+    x_max, y_max = io_array.shape
+    '''
+    kontrola indexov,
+    ak su v range tak mozeme pocitat
+    '''
+    if x < x_max and y < y_max:
+        io_array[x, y] *= 2
 
 
 data = numpy.ones((16, 16))
